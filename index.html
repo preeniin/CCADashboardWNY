@@ -39,6 +39,7 @@
             line-height: 1.6;
         }
 
+        /* --- HEADER STYLES (Updated for Shrinking Effect) --- */
         .dashboard-header {
             background-color: var(--primary-color);
             color: white;
@@ -48,10 +49,43 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: all 0.4s ease-in-out; /* Smooth transition */
+            transform-origin: top center;
         }
         
-        .dashboard-header h1 { font-size: 28px; font-weight: 600; }
-        .dashboard-header p { font-size: 16px; color: #e0f2fe; margin-top: 5px; }
+        .dashboard-header h1 { 
+            font-size: 28px; 
+            font-weight: 600; 
+            transition: font-size 0.4s ease-in-out;
+            margin: 0;
+        }
+        
+        .dashboard-header p { 
+            font-size: 16px; 
+            color: #e0f2fe; 
+            margin-top: 5px; 
+            transition: all 0.4s ease-in-out;
+            max-height: 50px; /* For smooth hiding */
+            opacity: 1;
+        }
+
+        /* Classes applied when scrolling down */
+        .dashboard-header.shrink {
+            padding: 10px 20px; /* Reduced padding */
+        }
+
+        .dashboard-header.shrink h1 {
+            font-size: 20px; /* Smaller font size */
+        }
+
+        .dashboard-header.shrink p {
+            font-size: 12px;
+            margin-top: 2px;
+            opacity: 0.8;
+            /* Optional: If you want to hide the subtitle completely on scroll, use:
+               max-height: 0; opacity: 0; margin-top: 0; overflow: hidden; */
+        }
+        /* ----------------------------------------------------- */
 
         .dashboard-container {
             max-width: 1200px;
@@ -246,7 +280,7 @@
 </head>
 <body>
 
-    <header class="dashboard-header">
+    <header class="dashboard-header" id="mainHeader">
         <h1>รายงานความก้าวหน้า โครงการคัดกรองมะเร็งท่อน้ำดี (CCA)</h1>
         <p>ปีงบประมาณ 2569 | โรงพยาบาลวังน้ำเย็น จังหวัดสระแก้ว</p>
     </header>
@@ -629,7 +663,17 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Setup Intersection Observer for scroll animations
+            // --- HEADER SHRINK ON SCROLL ---
+            const header = document.getElementById("mainHeader");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 50) {
+                    header.classList.add("shrink");
+                } else {
+                    header.classList.remove("shrink");
+                }
+            });
+
+            // --- ANIMATIONS ON SCROLL ---
             const observerOptions = {
                 root: null,
                 rootMargin: '0px',
@@ -697,3 +741,10 @@
     </script>
 </body>
 </html>
+```
+
+**สิ่งที่เพิ่มเข้าไป:**
+1.  **CSS Transition (`.dashboard-header.shrink`)**: เมื่อเลื่อนเมาส์ลง แถบ Header จะลด Padding ลง และขนาดตัวหนังสือจะเล็กลงอย่างนุ่มนวล (ใช้เวลา 0.4 วินาที)
+2.  **JavaScript (`window.addEventListener("scroll")`)**: คอยตรวจจับว่าถ้าเลื่อนหน้าจอเกิน 50px ให้ใส่คลาส `shrink` เข้าไปที่ Header แต่ถ้าเลื่อนกลับขึ้นไปบนสุด ก็จะถอดคลาสนี้ออก เพื่อให้กลับมาใหญ่เท่าเดิมครับ
+
+อัปเดตไฟล์ลง GitHub Pages ได้เลยครับ เวลาพรีเซนต์จริงจะได้มีพื้นที่โชว์ข้อมูลได้อย่างเต็มที่ครับ!
