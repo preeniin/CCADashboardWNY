@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard รายงานความก้าวหน้าโครงการคัดกรองมะเร็งท่อน้ำดี ปี 2569</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-body: #f1f5f9; /* Soft gray for background */
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --primary-color: #0369a1; /* Deep Ocean Blue */
+            --secondary-color: #0284c7; /* Lighter Blue */
+            --accent-color: #f59e0b; /* Amber */
+            --success-color: #10b981; /* Green */
+            --danger-color: #ef4444; /* Red */
+            --border-color: #e2e8f0;
+            --chart-yellow: #fcd34d;
+            --chart-red: #ef4444;
+            --chart-gray: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Prompt', sans-serif;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* --- HEADER STYLES (Updated for Shrinking Effect) --- */
+        .dashboard-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.4s ease-in-out; /* Smooth transition */
+            transform-origin: top center;
+        }
+        
+        .dashboard-header h1 { 
+            font-size: 28px; 
+            font-weight: 600; 
+            transition: font-size 0.4s ease-in-out;
+            margin: 0;
+        }
+        
+        .dashboard-header p { 
+            font-size: 16px; 
+            color: #e0f2fe; 
+            margin-top: 5px; 
+            transition: all 0.4s ease-in-out;
+            max-height: 50px; /* For smooth hiding */
+            opacity: 1;
+        }
+
+        /* Classes applied when scrolling down */
+        .dashboard-header.shrink {
+            padding: 10px 20px; /* Reduced padding */
+        }
+
+        .dashboard-header.shrink h1 {
+            font-size: 20px; /* Smaller font size */
+        }
+
+        .dashboard-header.shrink p {
+            font-size: 12px;
+            margin-top: 2px;
+            opacity: 0.8;
+            /* Optional: If you want to hide the subtitle completely on scroll, use:
+               max-height: 0; opacity: 0; margin-top: 0; overflow: hidden; */
+        }
+        /* ----------------------------------------------------- */
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            padding: 50px;
+            position: relative;
+            overflow: hidden; /* For gradient decoration only */
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(2,132,199,0.04) 0%, rgba(2,132,199,0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .card > * { position: relative; z-index: 1; }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        h3 { font-size: 22px; margin-bottom: 15px; color: var(--text-main); font-weight: 600;}
+        p, li { font-size: 18px; color: var(--text-muted); }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            align-items: stretch; /* Make all columns equal height */
+        }
+
+        .styled-list { list-style: none; }
+        .styled-list li {
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 15px;
+        }
+        .styled-list li i {
+            position: absolute;
+            left: 0;
+            top: 5px;
+            color: var(--secondary-color);
+            font-size: 20px;
+        }
+
+        .tile {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        .tile .icon {
+            font-size: 36px;
+            color: var(--primary-color);
+            background: rgba(2, 132, 199, 0.1);
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+        }
+
+        .divider-dashed {
+            border: none;
+            border-top: 1px dashed var(--border-color);
+            margin: 20px 0;
+        }
+
+        .funnel-container {
+            display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; margin-top: 20px;
+        }
+        .funnel-level {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; border-radius: 8px; padding: 15px; text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .funnel-level .label { font-size: 18px; opacity: 0.9;}
+        .funnel-level .number { font-size: 32px; font-weight: 700; line-height: 1.2;}
+        .funnel-level .pct { font-size: 20px; margin-left: 8px; font-weight: 500;}
+        .funnel-arrow { color: var(--text-muted); font-size: 20px; margin: 5px 0;}
+
+        .bar-chart { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+        .bar-item { display: flex; align-items: center; gap: 20px; }
+        .bar-label { flex: 0 0 200px; font-size: 18px; font-weight: 500; text-align: right; }
+        .bar-track { flex-grow: 1; background-color: var(--border-color); border-radius: 20px; height: 36px; }
+        .bar-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; color: white; font-weight: 600; border-radius: 20px; }
+
+        .highlight-grid { display: flex; justify-content: space-around; width: 100%; text-align: center; gap: 20px;}
+        .highlight-item { display: flex; flex-direction: column; align-items: center; }
+        .highlight-number { font-size: 64px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+        .highlight-label { font-size: 18px; font-weight: 500; color: var(--text-muted); }
+
+        .timeline-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; position: relative; margin-top: 40px; }
+        .timeline-item { text-align: center; display: flex; flex-direction: column; align-items: center; z-index: 1; }
+        .timeline-dot { width: 44px; height: 44px; background-color: var(--white); border: 4px solid var(--primary-color); border-radius: 50%; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary-color); z-index: 2;}
+        .timeline-line-bg { position: absolute; top: 20px; left: 10%; right: 10%; height: 4px; background-color: var(--border-color); z-index: 0; }
+
+        @media (max-width: 1024px) {
+            .two-column, .three-column, .timeline-layout { grid-template-columns: 1fr; }
+            .bar-item { flex-direction: column; align-items: flex-start; gap: 5px;}
+            .bar-label { text-align: left; flex: auto;}
+            .funnel-level { width: 100% !important; }
+            .timeline-line-bg { display: none; }
+        }
+
+        /* --- ANIMATIONS (0.4s - 0.8s) --- */
+        .animate-on-scroll {
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+        .fade-in-up { transform: translateY(30px); }
+        
+        /* Bar Chart Slide In */
+        .bar-item {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .bar-item.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .bar-fill {
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            white-space: nowrap;
+        }
+
+        /* Funnel Drop Down */
+        .funnel-level, .funnel-arrow, .funnel-two-col {
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease-out;
+        }
+        .funnel-container.is-visible .funnel-level,
+        .funnel-container.is-visible .funnel-arrow,
+        .funnel-container.is-visible .funnel-two-col {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .funnel-container.is-visible > *:nth-child(1) { transition-delay: 0.1s; }
+        .funnel-container.is-visible > *:nth-child(2) { transition-delay: 0.2s; }
+        .funnel-container.is-visible > *:nth-child(3) { transition-delay: 0.3s; }
+        .funnel-container.is-visible > *:nth-child(4) { transition-delay: 0.4s; }
+        .funnel-container.is-visible > *:nth-child(5) { transition-delay: 0.5s; }
+        .funnel-container.is-visible > *:nth-child(6) { transition-delay: 0.6s; }
+        .funnel-container.is-visible > *:nth-child(7) { transition-delay: 0.7s; }
+        .funnel-container.is-visible > *:nth-child(8) { transition-delay: 0.8s; }
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header" id="mainHeader">
+        <h1>รายงานความก้าวหน้า โครงการคัดกรองมะเร็งท่อน้ำดี (CCA)</h1>
+        <p>ปีงบประมาณ 2569 | โรงพยาบาลวังน้ำเย็น จังหวัดสระแก้ว</p>
+    </header>
+
+    <div class="dashboard-container">
+
+        <!-- NEW SECTION: แคมเปญรณรงค์ อำเภอวังน้ำเย็น (Added at the top) -->
+        <section class="card animate-on-scroll fade-in-up" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 8px solid var(--primary-color);">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 class="section-title" style="border-bottom: none; margin-bottom: 5px; font-size: 36px; color: var(--primary-color);">แคมเปญรณรงค์ อำเภอวังน้ำเย็น</h2>
+                <h3 style="color: var(--danger-color); font-size: 28px; font-weight: 700; margin-bottom: 20px;">"กินดิบ แซ่บปาก ลำบากตับ มะเร็งท่อน้ำดี มัจจุราชในจานโปรด"</h3>
+            </div>
+
+            <!-- วิดีโอ Spot รณรงค์จาก YouTube -->
+            <div style="display: flex; justify-content: center; margin-bottom: 40px;">
+                <div style="width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 2px solid var(--white);">
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0;">
+                        <iframe 
+                            src="https://www.youtube.com/embed/Z6phHUKbD_E?rel=0" 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" 
+                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="two-column" style="gap: 30px; margin-bottom: 40px; align-items: stretch;">
+                <!-- พยาธิใบไม้ตับ (OV) -->
+                <div class="tile" style="background-color: var(--white); border-color: var(--secondary-color); box-shadow: 0 4px 15px rgba(2, 132, 199, 0.1);">
+                    <h3 style="color: var(--secondary-color); font-size: 24px; margin-bottom: 15px;"><i class="fa-solid fa-bug" style="margin-right: 10px;"></i>พยาธิใบไม้ตับ (OV)</h3>
+                    <ul class="styled-list" style="text-align: left; margin: 0 auto; display: inline-block;">
+                        <li style="margin-bottom: 10px;"><strong>กลุ่มเป้าหมาย:</strong> อายุ 15 ปีขึ้นไป<br><span style="font-size: 16px;">(ที่มีประวัติกินปลาดิบ)</span></li>
+                        <li style="margin-bottom: 10px;"><strong>จำนวน:</strong> 200 คน</li>
+                        <li><strong>วิธีการตรวจ:</strong> Stool exam</li>
+                    </ul>
+                </div>
+                
+                <!-- มะเร็งท่อน้ำดี (CCA) -->
+                <div class="tile" style="background-color: var(--white); border-color: var(--primary-color); box-shadow: 0 4px 15px rgba(3, 105, 161, 0.1);">
+                    <h3 style="color: var(--primary-color); font-size: 24px; margin-bottom: 15px;"><i class="fa-solid fa-lungs-virus" style="margin-right: 10px;"></i>มะเร็งท่อน้ำดี (CCA)</h3>
+                    <ul class="styled-list" style="text-align: left; margin: 0 auto; display: inline-block;">
+                        <li style="margin-bottom: 10px;"><strong>กลุ่มเป้าหมาย:</strong> อายุ 40 ปีขึ้นไป<br><span style="font-size: 16px;">(ที่ OV Positive หรือมีประวัติกินเมนูปลาดิบ)</span></li>
+                        <li style="margin-bottom: 10px;"><strong>จำนวน:</strong> 150 ราย</li>
+                        <li><strong>วิธีการตรวจ:</strong> Ultrasound Abdomen</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="background-color: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--border-color);">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--success-color); font-size: 24px;"><i class="fa-solid fa-bullseye" style="margin-right: 10px;"></i>เป้าหมาย (GOAL)</h3>
+                    <p style="font-size: 20px; font-weight: 500; color: var(--text-main);">"เพื่อลดโรคสู่ความยั่งยืน ประชาชนกลุ่มเสี่ยงมีคุณภาพชีวิตที่ดี ปลอดจาก พยาธิใบไม้ตับและมะเร็งท่อน้ำดี"</p>
+                </div>
+                
+                <hr class="divider-dashed">
+
+                <div class="two-column" style="gap: 20px; align-items: start;">
+                    <div>
+                        <h4 style="color: var(--primary-color); font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-flag-checkered" style="margin-right: 8px;"></i>END GOAL</h4>
+                        <ul class="styled-list" style="text-align: left;">
+                            <li style="margin-bottom: 5px; font-size: 16px;"><i class="fa-solid fa-check" style="color: var(--success-color); font-size: 14px;"></i>พยาธิใบไม้ตับใน คน และใน ปลา ไม่เกินร้อยละ 1 ในปี 2568</li>
+                            <li style="margin-bottom: 5px; font-size: 16px;"><i class="fa-solid fa-check" style="color: var(--success-color); font-size: 14px;"></i>อัตราตายมะเร็งท่อน้ำดีลดลง 2 ใน 3 ในปี 2578</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-color); font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-chart-pie" style="margin-right: 8px;"></i>OUTCOME</h4>
+                        <ul class="styled-list" style="text-align: left;">
+                            <li style="margin-bottom: 5px; font-size: 16px;"><i class="fa-solid fa-arrow-trend-down" style="color: var(--accent-color); font-size: 14px;"></i>ประชาชนกลุ่มเป้าหมายเป็นโรคพยาธิใบไม้ตับน้อยกว่าร้อยละ 2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Existing Executive Summary Section -->
+        <section class="card animate-on-scroll fade-in-up">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 class="section-title">Executive Summary: บทสรุปผู้บริหาร</h2>
+                <p>ภาพรวมผลการดำเนินงานเชิงประจักษ์ ผ่านระบบคัดกรองที่มีประสิทธิภาพ</p>
+            </div>
+            
+            <div class="funnel-container animate-on-scroll">
+                <div class="funnel-level" style="width: 80%; background-color: var(--primary-color);">
+                    <span class="label">เป้าหมาย รพ.วังน้ำเย็น (จากเป้าหมาย สสจ. 150 ราย)</span>
+                    <span class="number"><span class="count-up" data-target="188">0</span> ราย</span>
+                    <span class="label" style="font-size: 14px; margin-top: 5px;">(ข้อมูลย้อนหลังปี 2565-2568 ที่มีประวัติ PDF1-3 และมีประวัติ Refer)</span>
+                </div>
+                <i class="fa-solid fa-caret-down funnel-arrow"></i>
+                
+                <div class="funnel-level" style="width: 70%; background-color: var(--success-color);">
+                    <span class="label">ตรวจแล้ว</span>
+                    <span class="number"><span class="count-up" data-target="159">0</span> ราย<span class="pct">(<span class="count-up" data-target="106">0</span>%)</span></span>
+                </div>
+                <i class="fa-solid fa-caret-down funnel-arrow"></i>
+
+                <div class="funnel-level" style="width: 60%; background-color: var(--accent-color);">
+                    <span class="label">พบผลผิดปกติทั้งหมด (Abnormal)</span>
+                    <span class="number"><span class="count-up" data-target="142">0</span> ราย<span class="pct">(<span class="count-up" data-target="89.31" data-decimals="2">0</span>%)</span></span>
+                </div>
+                <i class="fa-solid fa-caret-down funnel-arrow"></i>
+
+                <div class="funnel-level" style="width: 50%; background-color: var(--danger-color);">
+                    <span class="label">กลุ่มสงสัย CCA (R/O CCA)</span>
+                    <span class="number"><span class="count-up" data-target="4">0</span> ราย<span class="pct">(<span class="count-up" data-target="2.51" data-decimals="2">0</span>%)</span></span>
+                </div>
+                <i class="fa-solid fa-caret-down funnel-arrow"></i>
+
+                <div class="two-column funnel-two-col" style="gap: 20px; width: 80%; margin-top: 10px;">
+                    <div class="funnel-level" style="background-color: var(--text-muted); width: 100%;">
+                        <span class="label">ส่งต่อ รพ.วังน้ำเย็น</span>
+                        <span class="number" style="font-size: 28px;"><span class="count-up" data-target="33">0</span> ราย<span class="pct" style="font-size: 18px;">(<span class="count-up" data-target="20.75" data-decimals="2">0</span>%)</span></span>
+                    </div>
+                    <div class="funnel-level" style="background-color: var(--secondary-color); width: 100%;">
+                        <span class="label">ส่งต่อ รพร.สระแก้ว</span>
+                        <span class="number" style="font-size: 28px;"><span class="count-up" data-target="2">0</span> ราย<span class="pct" style="font-size: 18px;">(<span class="count-up" data-target="1.33" data-decimals="2">0</span>%)</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card animate-on-scroll fade-in-up">
+            <h2 class="section-title">ผลการดำเนินงานเปรียบเทียบเป้าหมาย</h2>
+            
+            <div class="bar-chart" style="margin-top: 20px; margin-bottom: 40px;">
+                <div class="bar-item animate-on-scroll">
+                    <div class="bar-label">เป้าหมาย สสจ.</div>
+                    <div class="bar-track"><div class="bar-fill" data-width="79%" style="width: 0%; background-color: var(--text-muted);">150 ราย</div></div>
+                </div>
+                <div class="bar-item animate-on-scroll">
+                    <div class="bar-label">เป้าหมาย รพ.วังน้ำเย็น</div>
+                    <div class="bar-track"><div class="bar-fill" data-width="100%" style="width: 0%; background-color: var(--primary-color);">188 ราย</div></div>
+                </div>
+                <div class="bar-item animate-on-scroll">
+                    <div class="bar-label">ตรวจแล้ว</div>
+                    <div class="bar-track"><div class="bar-fill" data-width="84.5%" style="width: 0%; background-color: var(--success-color);">159 ราย (106%)</div></div>
+                </div>
+                <div class="bar-item animate-on-scroll">
+                    <div class="bar-label">ผลผิดปกติ</div>
+                    <div class="bar-track"><div class="bar-fill" data-width="75.5%" style="width: 0%; background-color: var(--accent-color);">142 ราย (89.31%)</div></div>
+                </div>
+                
+                <div class="bar-item animate-on-scroll">
+                    <div class="bar-label">กลุ่มสงสัย CCA</div>
+                    <!-- ย้ายข้อความออกมานอกแถบสี และเปลี่ยนเป็นตัวอักษรสีเข้ม -->
+                    <div class="bar-track" style="position: relative;">
+                        <div class="bar-fill" data-width="3%" style="width: 0%; background-color: var(--danger-color); padding: 0;"></div>
+                        <div style="position: absolute; left: 3%; top: 0; height: 100%; display: flex; align-items: center; padding-left: 12px; color: var(--text-main); font-weight: 600; white-space: nowrap;">4 ราย (2.51%)</div>
+                    </div>
+                </div>
+                <div class="bar-item animate-on-scroll">
+                    <div class="bar-label">ส่งต่อ รพ.วังน้ำเย็น</div>
+                    <!-- ใส่ white-space: nowrap ป้องกันคำตกบรรทัด -->
+                    <div class="bar-track"><div class="bar-fill" data-width="25%" style="width: 0%; background-color: var(--text-muted); white-space: nowrap;">33 ราย (20.75%)</div></div>
+                </div>
+                <div class="bar-item animate-on-scroll">
+                    <div class="bar-label">ส่งต่อ รพร.สระแก้ว</div>
+                    <!-- ย้ายข้อความออกมานอกแถบสี และเปลี่ยนเป็นตัวอักษรสีเข้ม -->
+                    <div class="bar-track" style="position: relative;">
+                        <div class="bar-fill" data-width="2%" style="width: 0%; background-color: var(--secondary-color); padding: 0;"></div>
+                        <div style="position: absolute; left: 2%; top: 0; height: 100%; display: flex; align-items: center; padding-left: 12px; color: var(--text-main); font-weight: 600; white-space: nowrap;">2 ราย (1.33%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-grid">
+                <div class="highlight-item">
+                    <div class="highlight-number" style="color: var(--success-color);"><span class="count-up" data-target="106">0</span>%</div>
+                    <div class="highlight-label">เทียบเป้าหมาย สสจ.</div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-number" style="color: var(--accent-color);"><span class="count-up" data-target="89.31" data-decimals="2">0</span>%</div>
+                    <div class="highlight-label">อัตราพบความผิดปกติ</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card animate-on-scroll fade-in-up">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 class="section-title">วิเคราะห์ความผิดปกติ: กลุ่มเสี่ยงต่ำ (Low Risk)</h2>
+            </div>
+            
+            <!-- Here is the fixed 3-column layout that will auto-expand height -->
+            <div class="three-column">
+                
+                <!-- Box 1 -->
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <h3 style="color: var(--primary-color);">พังผืดรอบท่อน้ำดี<br>(PDF 1-2)</h3>
+                    <div style="font-size: 42px; font-weight: 700; color: var(--text-main); margin: 10px 0;"><span class="count-up" data-target="88">0</span> ราย</div>
+                    <p style="margin-bottom: auto;">พบมากที่สุด<br>คิดเป็นสัดส่วนสูงในกลุ่มเสี่ยง</p>
+                    
+                    <hr class="divider-dashed">
+                    
+                    <p style="color: var(--text-main); font-weight: 500;">แนวทางจัดการ:</p>
+                    <p>นัดทำ US ติดตามผลใน 1 ปี<br>ให้คำแนะนำการดูแลตนเอง</p>
+                </div>
+                
+                <!-- Box 2 -->
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-burger"></i></div>
+                    <h3 style="color: var(--primary-color);">ไขมันพอกตับ<br>(Fatty Liver)</h3>
+                    <div style="font-size: 42px; font-weight: 700; color: var(--text-main); margin: 10px 0;"><span class="count-up" data-target="60">0</span> ราย</div>
+                    <p style="margin-bottom: auto;">สะท้อนปัญหาเชิง<br>พฤติกรรมโภชนาการ</p>
+                    
+                    <hr class="divider-dashed">
+                    
+                    <p style="color: var(--text-main); font-weight: 500;">แนวทางจัดการ:</p>
+                    <p>รพสต. ให้สุขศึกษาเชิงรุก<br>ปรับเปลี่ยนพฤติกรรมลด NCDs</p>
+                </div>
+                
+                <!-- Box 3 (Updated to 20 Cases) -->
+                <div class="tile" style="border: 2px solid var(--primary-color); background-color: #f8fafc;">
+                    <div class="icon"><i class="fa-solid fa-notes-medical"></i></div>
+                    <h3 style="color: var(--primary-color);">ความผิดปกติอื่นๆ<br>&nbsp;</h3>
+                    <div style="font-size: 42px; font-weight: 700; color: var(--primary-color); margin: 10px 0;"><span class="count-up" data-target="20">0</span> ราย</div>
+                    <p style="margin-bottom: auto;">เช่น นิ่วในไต ถุงน้ำในไต<br>หรือตับแข็ง</p>
+                    
+                    <hr class="divider-dashed">
+                    
+                    <p style="color: var(--text-main); font-weight: 500;">แนวทางจัดการ:</p>
+                    <p>พบแพทย์ตาม รพ.ต้นสังกัด<br>เพื่อประเมินและรักษาตามอาการ</p>
+                </div>
+                
+            </div>
+        </section>
+
+        <section class="card animate-on-scroll fade-in-up">
+            <h2 class="section-title">วิเคราะห์ความผิดปกติ: กลุ่มเสี่ยงสูง (High Risk)</h2>
+            <div class="two-column" style="align-items: stretch;">
+                <div class="tile" style="border-top: 5px solid var(--accent-color); justify-content: center;">
+                    <h3><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--accent-color); margin-right: 10px;"></i>กลุ่มเฝ้าระวัง (PDF 3)</h3>
+                    <div style="font-size: 56px; font-weight: 700; color: var(--text-main);"><span class="count-up" data-target="2">0</span> ราย</div>
+                    <p>พบภาวะพังผืดรอบท่อน้ำดีระดับ 3</p>
+                    <hr class="divider-dashed">
+                    <p><strong>แนวทาง:</strong> นัดทำ Ultrasound ทุกๆ 6 เดือน</p>
+                </div>
+                <div class="tile" style="border-top: 5px solid var(--danger-color); justify-content: center;">
+                    <h3 style="color: var(--danger-color);"><i class="fa-solid fa-triangle-exclamation" style="margin-right: 10px;"></i>กลุ่มสงสัย CCA (R/O CCA)</h3>
+                    <div style="font-size: 56px; font-weight: 700; color: var(--danger-color); margin-bottom: 5px;"><span class="count-up" data-target="4">0</span> ราย</div>
+                    
+                    <ul class="styled-list" style="text-align: left; margin: 0 auto; display: inline-block;">
+                        <li style="margin-bottom: 5px; font-size: 16px;"><i class="fa-solid fa-circle" style="font-size: 8px; top: 10px;"></i>พบ Liver Mass ทั้ง 4 ราย</li>
+                        <li style="margin-bottom: 5px; font-size: 16px;"><i class="fa-solid fa-circle" style="font-size: 8px; top: 10px;"></i>ติดตามทุก 6 เดือน 2 ราย</li>
+                        <li style="margin-bottom: 5px; font-size: 16px;"><i class="fa-solid fa-circle" style="font-size: 8px; top: 10px;"></i>Refer รพร.สระแก้ว 2 ราย ตาม CPG<br><span style="font-size: 14px; opacity: 0.8; padding-left: 0;">(เฉพาะ High echo, Low echo, Mixed echo, Dilated Bile Duct)</span></li>
+                        <li style="margin-bottom: 5px; font-size: 16px;"><i class="fa-solid fa-circle" style="font-size: 8px; top: 10px;"></i>อยู่ระหว่างรอผลการวินิจฉัย</li>
+                    </ul>
+                    
+                    <hr class="divider-dashed" style="margin: 15px 0;">
+                    <p style="color: var(--danger-color); font-size: 16px;"><strong>แนวทาง:</strong> ส่งต่อพบศัลยแพทย์เพื่อวินิจฉัยยืนยัน (CT/MRI)</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card animate-on-scroll fade-in-up">
+            <h2 class="section-title">สัดส่วนการนัดติดตามผล (Follow-up Plan)</h2>
+            <div class="two-column">
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <!-- CSS Pie Chart (Updated Colors) -->
+                    <div style="width: 320px; height: 320px; border-radius: 50%; background: conic-gradient(
+                        var(--primary-color) 0% 89.3%, 
+                        var(--accent-color) 89.3% 96.84%, 
+                        var(--chart-gray) 96.84% 100%
+                    ); box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                    </div>
+                </div>
+                <div>
+                    <ul class="styled-list">
+                        <li style="margin-bottom: 25px;">
+                            <i class="fa-solid fa-circle" style="color: var(--primary-color); top: 6px;"></i>
+                            <strong style="font-size: 24px; color: var(--text-main);">142 ราย (89.30%)</strong> นัดติดตาม 1 ปี<br>
+                            <span style="font-size: 16px;">(กลุ่มเสี่ยงน้อย PDF 1-2 และความผิดปกติทั่วไป)</span>
+                        </li>
+                        <li style="margin-bottom: 25px;">
+                            <i class="fa-solid fa-circle" style="color: var(--accent-color); top: 6px;"></i>
+                            <strong style="font-size: 24px; color: var(--text-main);">12 ราย (7.54%)</strong> นัดติดตาม 6 เดือน<br>
+                            <span style="font-size: 16px;">(กลุ่มเฝ้าระวังใกล้ชิด PDF 3 และความผิดปกติอื่นๆ)</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle" style="color: var(--chart-gray); top: 6px;"></i>
+                            <strong style="font-size: 24px; color: var(--text-main);">3 ราย (1.88%)</strong> DC ออกจากโครงการ<br>
+                            <span style="font-size: 16px;">(สิ้นสุดการติดตามผล)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="card animate-on-scroll fade-in-up">
+            <h2 class="section-title">มาตรฐานการจัดการตาม CPG จังหวัดสระแก้ว</h2>
+            <p style="text-align: center; margin-bottom: 20px;">ยึดถือแนวทางการคัดกรองมะเร็งท่อน้ำดีจังหวัดสระแก้ว อย่างเคร่งครัด</p>
+            
+            <div class="timeline-layout">
+                <div class="timeline-line-bg"></div>
+                <div class="timeline-item">
+                    <div class="timeline-dot">1</div>
+                    <h4 style="color: var(--text-main); font-size: 20px; margin-bottom: 5px;">ค้นหากลุ่มเสี่ยง</h4>
+                    <p style="font-size: 16px;">อายุ ≥40 ปี มีประวัติเสี่ยง<br>รพสต. บันทึก CCA-01</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot">2</div>
+                    <h4 style="color: var(--text-main); font-size: 20px; margin-bottom: 5px;">ตรวจ Ultrasound</h4>
+                    <p style="font-size: 16px;">บันทึก CCA-02<br>หากปกติ รพช. ให้คำแนะนำ</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot">3</div>
+                    <h4 style="color: var(--text-main); font-size: 20px; margin-bottom: 5px;">จัดการความเสี่ยงต่ำ</h4>
+                    <p style="font-size: 16px;">PDF 1,2 นัด 1 ปี<br>PDF 3 นัด 6 เดือน</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="border-color: var(--danger-color); color: var(--danger-color);">4</div>
+                    <h4 style="color: var(--danger-color); font-size: 20px; margin-bottom: 5px;">ส่งต่อรักษา (Refer)</h4>
+                    <p style="font-size: 16px;">Liver Mass / Dilated Duct<br>ส่งต่อ รพร.สระแก้ว</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: วิเคราะห์ปัญหา อุปสรรค และโอกาสพัฒนา -->
+        <section class="card animate-on-scroll fade-in-up">
+            <h2 class="section-title">วิเคราะห์ปัญหา อุปสรรค และโอกาสพัฒนา</h2>
+            
+            <div class="two-column" style="gap: 30px; align-items: stretch; margin-bottom: 30px;">
+                <!-- ปัญหา 1 -->
+                <div class="tile" style="text-align: left; padding: 30px;">
+                    <h3 style="color: var(--accent-color); font-size: 20px;"><i class="fa-solid fa-user-doctor" style="margin-right: 10px;"></i>1. ข้อจำกัดในการทำงาน</h3>
+                    <p style="font-weight: 600; color: var(--text-main); margin-bottom: 15px; font-size: 16px; background-color: #fef3c7; display: inline-block; padding: 4px 10px; border-radius: 6px;">ตรวจได้วันละ 25 ราย ใช้เวลา 11 วัน</p>
+                    <ul class="styled-list" style="margin-bottom: 0;">
+                        <li style="font-size: 16px; margin-bottom: 10px;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>จังหวัดให้ดำเนินการตรวจเอง สนับสนุนรังสีแพทย์สำหรับ consult เท่านั้น</li>
+                        <li style="font-size: 16px; margin-bottom: 0;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>ใช้เวลาในการ consult เคสนานเนื่องจาก consult ผ่านไลน์</li>
+                    </ul>
+                </div>
+                
+                <!-- ปัญหา 2 -->
+                <div class="tile" style="text-align: left; padding: 30px;">
+                    <h3 style="color: var(--text-muted); font-size: 20px;"><i class="fa-solid fa-person-booth" style="margin-right: 10px;"></i>2. ข้อจำกัดเรื่องสถานที่ตรวจ</h3>
+                    <ul class="styled-list" style="margin-bottom: 0; margin-top: 15px;">
+                        <li style="font-size: 16px; margin-bottom: 10px;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>ห้องที่ใช้ตรวจเล็กและไม่มีม่านปิดบังแสง</li>
+                        <li style="font-size: 16px; margin-bottom: 0;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>สถานที่ตรวจเล็กเนื่องจากใช้ร่วมกับคลินิกส่งเสริม</li>
+                    </ul>
+                </div>
+                
+                <!-- ปัญหา 3 -->
+                <div class="tile" style="text-align: left; padding: 30px;">
+                    <h3 style="color: var(--primary-color); font-size: 20px;"><i class="fa-solid fa-stethoscope" style="margin-right: 10px;"></i>3. ข้อจำกัดเรื่องอุปกรณ์การตรวจ</h3>
+                    <ul class="styled-list" style="margin-bottom: 0; margin-top: 15px;">
+                        <li style="font-size: 16px; margin-bottom: 10px;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>ไม่มีระบบ conference ที่เชื่อมกับเครื่องอัลตราซาวด์</li>
+                        <li style="font-size: 16px; margin-bottom: 0;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>ใช้เครื่องร่วมกับ OPD จึงต้องบริหารเวลาในการยืม-คืน</li>
+                    </ul>
+                </div>
+                
+                <!-- ปัญหา 4 -->
+                <div class="tile" style="text-align: left; padding: 30px;">
+                    <h3 style="color: var(--danger-color); font-size: 20px;"><i class="fa-solid fa-calendar-xmark" style="margin-right: 10px;"></i>4. ข้อจำกัดเรื่องกลุ่มเป้าหมาย</h3>
+                    <ul class="styled-list" style="margin-bottom: 0; margin-top: 15px;">
+                        <li style="font-size: 16px; margin-bottom: 10px;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>กลุ่มเป้าหมายไม่มาตรวจตามนัด</li>
+                        <li style="font-size: 16px; margin-bottom: 0;"><i class="fa-solid fa-circle" style="font-size: 6px; top: 12px; color: var(--text-muted);"></i>กลุ่มเป้าหมายที่ได้รับการส่งต่อแล้ว ไม่ไปตามใบส่งตัว</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- โอกาสพัฒนา -->
+            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 8px solid var(--success-color); border-radius: 12px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="background-color: var(--success-color); color: white; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
+                        <i class="fa-solid fa-rocket"></i>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--success-color); font-size: 24px; margin-bottom: 5px;">โอกาสพัฒนา (Development Opportunities)</h3>
+                        <p style="font-size: 20px; color: var(--text-main); font-weight: 500;">"วางแผนเปิดคลินิกคัดกรองมะเร็งเต็มรูปแบบ ทุกเดือนเพื่อเพิ่มการเข้าถึงในกลุ่มคนไข้รายใหม่"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+            <p>© 2569 โรงพยาบาลวังน้ำเย็น จังหวัดสระแก้ว - โครงการคัดกรองมะเร็งท่อน้ำดี</p>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // --- HEADER SHRINK ON SCROLL ---
+            const header = document.getElementById("mainHeader");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 50) {
+                    header.classList.add("shrink");
+                } else {
+                    header.classList.remove("shrink");
+                }
+            });
+
+            // --- ANIMATIONS ON SCROLL ---
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        el.classList.add('is-visible');
+                        
+                        // Handle Bar Chart Width Animation
+                        if (el.classList.contains('bar-item')) {
+                            const barFill = el.querySelector('.bar-fill');
+                            if (barFill && barFill.getAttribute('data-width')) {
+                                barFill.style.width = barFill.getAttribute('data-width');
+                            }
+                        }
+
+                        // Handle Count Up Animation
+                        const numberElements = el.querySelectorAll('.count-up');
+                        if (numberElements.length > 0) {
+                            animateNumbers(numberElements);
+                        }
+
+                        observer.unobserve(el); // Animate only once
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements
+            document.querySelectorAll('.animate-on-scroll, .funnel-container, .bar-item').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Count Up Function
+            function animateNumbers(elements) {
+                elements.forEach(el => {
+                    const target = parseFloat(el.getAttribute('data-target'));
+                    const decimals = parseInt(el.getAttribute('data-decimals')) || 0;
+                    const duration = 800; // 0.8 seconds (fast & professional)
+                    let startTimestamp = null;
+
+                    const step = (timestamp) => {
+                        if (!startTimestamp) startTimestamp = timestamp;
+                        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                        
+                        // Easing Out (starts fast, slows down at end)
+                        const easeOut = 1 - Math.pow(1 - progress, 3);
+                        const currentVal = target * easeOut;
+
+                        el.innerText = currentVal.toFixed(decimals);
+
+                        if (progress < 1) {
+                            window.requestAnimationFrame(step);
+                        } else {
+                            el.innerText = target.toFixed(decimals); // Ensure exact final value
+                        }
+                    };
+                    window.requestAnimationFrame(step);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+**สิ่งที่เพิ่มเข้าไป:**
+1.  **CSS Transition (`.dashboard-header.shrink`)**: เมื่อเลื่อนเมาส์ลง แถบ Header จะลด Padding ลง และขนาดตัวหนังสือจะเล็กลงอย่างนุ่มนวล (ใช้เวลา 0.4 วินาที)
+2.  **JavaScript (`window.addEventListener("scroll")`)**: คอยตรวจจับว่าถ้าเลื่อนหน้าจอเกิน 50px ให้ใส่คลาส `shrink` เข้าไปที่ Header แต่ถ้าเลื่อนกลับขึ้นไปบนสุด ก็จะถอดคลาสนี้ออก เพื่อให้กลับมาใหญ่เท่าเดิมครับ
+
+อัปเดตไฟล์ลง GitHub Pages ได้เลยครับ เวลาพรีเซนต์จริงจะได้มีพื้นที่โชว์ข้อมูลได้อย่างเต็มที่ครับ!
