@@ -72,7 +72,7 @@
         .bar-item { display: flex; align-items: center; gap: 20px; }
         .bar-label { flex: 0 0 200px; font-size: 18px; font-weight: 500; text-align: right; }
         .bar-track { flex-grow: 1; background-color: var(--border-color); border-radius: 20px; height: 36px; }
-        .bar-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; color: white; font-weight: 600; border-radius: 20px; white-space: nowrap; overflow: hidden;}
+        .bar-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; color: white; font-weight: 600; border-radius: 20px; white-space: nowrap; overflow: hidden; max-width: 100%; }
         
         .highlight-grid { display: flex; justify-content: space-around; width: 100%; text-align: center; gap: 20px;}
         .highlight-item { display: flex; flex-direction: column; align-items: center; }
@@ -121,7 +121,7 @@
 </head>
 <body>
     
-    <!-- Loading Screen (แสดงตอนดึงข้อมูลจาก Sheet) -->
+    <!-- Loading Screen -->
     <div id="loadingOverlay">
         <div class="loader"></div>
         <p style="margin-top: 15px; color: var(--primary-color); font-weight: 500;">กำลังอัปเดตข้อมูลล่าสุด...</p>
@@ -253,28 +253,28 @@
                 </div>
                 <div class="bar-item animate-on-scroll">
                     <div class="bar-label">ตรวจแล้ว</div>
-                    <div class="bar-track"><div class="bar-fill" data-bar-key="pct_screened" data-width="0%" style="width: 0%; background-color: var(--success-color);"><span data-key="screened">0</span> ราย (<span data-key="pct_screened" data-decimals="1">0</span>%)</div></div>
+                    <div class="bar-track"><div class="bar-fill" data-bar-key="bar_screened" data-width="0%" style="width: 0%; background-color: var(--success-color);"><span data-key="screened">0</span> ราย (<span data-key="pct_screened" data-decimals="1">0</span>%)</div></div>
                 </div>
                 <div class="bar-item animate-on-scroll">
                     <div class="bar-label">ผลผิดปกติ</div>
-                    <div class="bar-track"><div class="bar-fill" data-bar-key="pct_abnormal" data-width="0%" style="width: 0%; background-color: var(--accent-color);"><span data-key="abnormal">0</span> ราย (<span data-key="pct_abnormal" data-decimals="2">0</span>%)</div></div>
+                    <div class="bar-track"><div class="bar-fill" data-bar-key="bar_abnormal" data-width="0%" style="width: 0%; background-color: var(--accent-color);"><span data-key="abnormal">0</span> ราย (<span data-key="pct_abnormal" data-decimals="2">0</span>%)</div></div>
                 </div>
                 
                 <div class="bar-item animate-on-scroll">
                     <div class="bar-label">กลุ่มสงสัย CCA</div>
                     <div class="bar-track" style="position: relative;">
-                        <div class="bar-fill" data-bar-key="pct_suspect_cca" data-width="0%" style="width: 0%; background-color: var(--danger-color); padding: 0; min-width: 1%;"></div>
+                        <div class="bar-fill" data-bar-key="bar_suspect_cca" data-width="0%" style="width: 0%; background-color: var(--danger-color); padding: 0; min-width: 1%;"></div>
                         <div style="position: absolute; left: 15px; top: 0; height: 100%; display: flex; align-items: center; color: var(--text-main); font-weight: 600; white-space: nowrap;"><span data-key="suspect_cca">0</span> ราย (<span data-key="pct_suspect_cca" data-decimals="2">0</span>%)</div>
                     </div>
                 </div>
                 <div class="bar-item animate-on-scroll">
                     <div class="bar-label">ส่งต่อ รพ.วังน้ำเย็น</div>
-                    <div class="bar-track"><div class="bar-fill" data-bar-key="pct_refer_w" data-width="0%" style="width: 0%; background-color: var(--text-muted);"><span data-key="refer_w">0</span> ราย (<span data-key="pct_refer_w" data-decimals="2">0</span>%)</div></div>
+                    <div class="bar-track"><div class="bar-fill" data-bar-key="bar_refer_w" data-width="0%" style="width: 0%; background-color: var(--text-muted);"><span data-key="refer_w">0</span> ราย (<span data-key="pct_refer_w" data-decimals="2">0</span>%)</div></div>
                 </div>
                 <div class="bar-item animate-on-scroll">
                     <div class="bar-label">ส่งต่อ รพร.สระแก้ว</div>
                     <div class="bar-track" style="position: relative;">
-                        <div class="bar-fill" data-bar-key="pct_refer_s" data-width="0%" style="width: 0%; background-color: var(--secondary-color); padding: 0; min-width: 1%;"></div>
+                        <div class="bar-fill" data-bar-key="bar_refer_s" data-width="0%" style="width: 0%; background-color: var(--secondary-color); padding: 0; min-width: 1%;"></div>
                         <div style="position: absolute; left: 15px; top: 0; height: 100%; display: flex; align-items: center; color: var(--text-main); font-weight: 600; white-space: nowrap;"><span data-key="refer_s">0</span> ราย (<span data-key="pct_refer_s" data-decimals="2">0</span>%)</div>
                     </div>
                 </div>
@@ -471,50 +471,54 @@
             // =========================================================
             const WEB_APP_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQG4pmtoqy_A0QbdE9XB2FREcEmHO4FXkbmAJ-L_VLcWqMp2xcCxFl5Cj6LT2WHTkDeDyMkbipkD8R-WUUZipZvT5G8HCujhoaDtwDcqkx-qYwPBvUkT6BElVif6Xjfj-_qP4I9G4Ml9uhCNINDv9FqSnsrSpJ4W3wPTSF5Nb87uyJtTe83Ag431S7a5TNWv-zw0VDLmmquauImBagbPIqBU1uaIxw-AQqqGAEcELmicTvz_m6CxnVrsKu7qQlXTaNr9zsmJvsTL163OdW7Y_WiawbU4w&lib=MlvyhlKb5lZEwqA1teJAW8dgOk9oQtapK"; 
             
-            // ตัวแปรข้อมูลเริ่มต้น (กรณีที่ดึงข้อมูลจาก Sheet ไม่สำเร็จ จะใช้ตัวเลขเก่าที่คุณให้มา)
+            // ตัวแปรข้อมูลเริ่มต้น
             let appData = {
                 target_ssj: 150, target_hos: 188, screened: 159, abnormal: 142, suspect_cca: 4, refer_w: 33, refer_s: 2, 
                 pdf_1_2: 88, fatty: 60, other: 20, pdf_3: 2, fu_1y: 142, fu_6m: 12, dc: 3
             };
 
             // ฟังก์ชันดึงข้อมูลจาก Google Sheets
-            // ตรวจสอบว่าได้เปลี่ยน URL หรือยัง (ถ้ายังเป็นข้อความเดิม แสดงว่ายังไม่ได้ใส่)
             if(WEB_APP_URL.indexOf("วาง_URL") === -1) {
                 fetch(WEB_APP_URL)
                     .then(response => response.json())
                     .then(data => {
-                        // ปิดหน้าจอ Loading
                         document.getElementById('loadingOverlay').style.opacity = '0';
                         setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
                         
-                        appData = {...appData, ...data}; // นำข้อมูลจาก Sheet มาทับข้อมูลเริ่มต้น
+                        appData = {...appData, ...data};
                         processAndDisplayData();
                     })
                     .catch(error => {
                         console.error("เกิดข้อผิดพลาดในการดึงข้อมูลจาก Google Sheets:", error);
-                        alert("ไม่สามารถดึงข้อมูลล่าสุดได้ ระบบจะแสดงข้อมูลจำลองแทน");
+                        // นำ alert ออก เพื่อไม่ให้เป็นการบล็อคหน้าจอผู้ใช้
+                        console.warn("ไม่สามารถดึงข้อมูลล่าสุดได้ ระบบจะแสดงข้อมูลจำลองแทน");
                         document.getElementById('loadingOverlay').style.display = 'none';
                         processAndDisplayData();
                     });
             } else {
-                // หากยังไม่ได้ใส่ URL ก็แสดงข้อมูลเดิมและปิด Loading ทันที
                 document.getElementById('loadingOverlay').style.display = 'none';
                 processAndDisplayData();
             }
 
-            // ฟังก์ชันคำนวณและเตรียมการแสดงผล
             function processAndDisplayData() {
-                // 1. คำนวณเปอร์เซ็นต์อัตโนมัติ
+                // 1. คำนวณเปอร์เซ็นต์อัตโนมัติ (สำหรับแสดงเป็นตัวหนังสือ % ในวงเล็บ)
+                // คงการใช้เป้าหมาย สสจ. (150) เป็นฐานประเมินผลงาน เพื่อให้ได้ 118%
                 appData.pct_screened = (appData.screened / appData.target_ssj) * 100;
                 appData.pct_abnormal = (appData.abnormal / appData.screened) * 100;
                 appData.pct_suspect_cca = (appData.suspect_cca / appData.screened) * 100;
                 appData.pct_refer_w = (appData.refer_w / appData.screened) * 100;
                 appData.pct_refer_s = (appData.refer_s / appData.screened) * 100;
                 
-                // คำนวณความกว้าง Bar Chart (เอาเป้าหมายของ รพ. เป็น 100%)
-                const maxBarValue = Math.max(appData.target_ssj, appData.target_hos);
+                // 2. คำนวณความกว้าง Bar Chart (เพื่อให้สัดส่วนกราฟสมจริง โดยหารกับยอดที่สูงที่สุด)
+                // หาค่าสูงสุด (เช่น 188) มาเป็นความกว้าง 100% ของหลอด
+                const maxBarValue = Math.max(appData.target_ssj, appData.target_hos, appData.screened);
                 appData.bar_target_ssj = (appData.target_ssj / maxBarValue) * 100;
                 appData.bar_target_hos = (appData.target_hos / maxBarValue) * 100;
+                appData.bar_screened = (appData.screened / maxBarValue) * 100;
+                appData.bar_abnormal = (appData.abnormal / maxBarValue) * 100;
+                appData.bar_suspect_cca = (appData.suspect_cca / maxBarValue) * 100;
+                appData.bar_refer_w = (appData.refer_w / maxBarValue) * 100;
+                appData.bar_refer_s = (appData.refer_s / maxBarValue) * 100;
 
                 // คำนวณสัดส่วน Pie Chart
                 const totalFU = appData.fu_1y + appData.fu_6m + appData.dc;
@@ -522,7 +526,7 @@
                 appData.pct_fu_6m = (appData.fu_6m / totalFU) * 100;
                 appData.pct_dc = (appData.dc / totalFU) * 100;
 
-                // 2. แทนที่ข้อมูลธรรมดา (ที่ไม่ต้องรัน Animation) 
+                // 3. แทนที่ข้อมูลธรรมดา (ที่ไม่ต้องรัน Animation) 
                 document.querySelectorAll('span[data-key]:not(.count-up)').forEach(el => {
                     const key = el.getAttribute('data-key');
                     const decimals = parseInt(el.getAttribute('data-decimals')) || 0;
@@ -531,7 +535,7 @@
                     }
                 });
 
-                // 3. ผูกค่าสำหรับ Animation ตัวเลข
+                // 4. ผูกค่าสำหรับ Animation ตัวเลข
                 document.querySelectorAll('.count-up').forEach(el => {
                     const key = el.getAttribute('data-key');
                     if(appData[key] !== undefined) {
@@ -539,7 +543,7 @@
                     }
                 });
 
-                // 4. ผูกค่าสำหรับกราฟแท่ง
+                // 5. ผูกค่าสำหรับกราฟแท่ง (ใช้ตัวแปร bar_... แทน pct_...)
                 document.querySelectorAll('.bar-fill').forEach(el => {
                     const key = el.getAttribute('data-bar-key');
                     if(appData[key] !== undefined) {
@@ -547,7 +551,7 @@
                     }
                 });
 
-                // 5. วาด Pie Chart ด้วย CSS Conic Gradient
+                // 6. วาด Pie Chart ด้วย CSS Conic Gradient
                 const colorPrimary = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
                 const colorAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
                 const colorGray = getComputedStyle(document.documentElement).getPropertyValue('--chart-gray').trim();
@@ -557,7 +561,7 @@
                 const pieChart = document.getElementById('pieChart');
                 pieChart.style.background = `conic-gradient(${colorPrimary} 0% ${p1}%, ${colorAccent} ${p1}% ${p2}%, ${colorGray} ${p2}% 100%)`;
 
-                // 6. เริ่มจับการ Scroll หน้าจอ
+                // 7. เริ่มจับการ Scroll หน้าจอ
                 initScrollAnimations();
             }
 
